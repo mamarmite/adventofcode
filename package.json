@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "20231201": "node 20231201.js",
+    "20231202": "node 20231202.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

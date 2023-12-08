@@ -25,7 +25,7 @@ class Defi {
 
     analyse() {
         this.init();
-        console.log("Defi initiation");
+        console.log(`Defi initiation super of ${this.name}`);
     }
 
     answer(value) {
