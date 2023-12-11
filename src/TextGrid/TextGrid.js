@@ -65,7 +65,7 @@ class TextGrid {
         //fonctionne seulement horizontal.
         const walkingMax = 2;
         const targetRow = this.grid[fromPos.y];
-
+        console.log("find number from", this.char(fromPos.x, fromPos.y), "pos", fromPos);
         const toLeft1 = fromPos.x - 1;
         const toLeft2 = fromPos.x - 2;
         const toLeft3 = fromPos.x - 3;
@@ -74,9 +74,10 @@ class TextGrid {
         const toRight2 = fromPos.x + 2;
         const toRight3 = fromPos.x + 3;
         //const checkValuesLeft = [];
-        const checkValues = [toLeft1, toLeft2, center, toRight1, toRight2];
+        const checkValues = [toLeft2, toLeft1, center, toRight1, toRight2];
 
         const notValid = ['*','#','$', '.'];
+        const stopValue = ['.'];
         let numbers = [];
         let numberString = "";
         let lastChar = "";
@@ -84,21 +85,33 @@ class TextGrid {
 
         for (let targetX of checkValues) {
             const targetChar = this.char(targetX, fromPos.y);
-            if (notValid.includes(targetChar) && lastCharIsNumber) {
+            if (stopValue.includes(targetChar) && lastCharIsNumber) {
                 break;
             }
+            if (notValid.includes(targetChar) && lastCharIsNumber) {
+                continue;
+            }
             if (!notValid.includes(targetChar) && Number(targetChar) > 0) {
-                numbers.push({pos: targetX, value: targetChar})
-                numberString += targetChar;
+                numbers.push({pos: Number(targetX), value: targetChar})
             }
             lastChar = targetChar;
             lastCharIsNumber = Number(targetChar) > 0;
         }
 
-        console.log(numbers, numberString);
-
-        numbers.reduce((a, b) => {}, 0)
-
+        const orderByPos = (a, b) => {
+            if ( a.pos < b.pos ){
+                return -1;
+            }
+            if ( a.pos > b.pos ){
+                return 1;
+            }
+            return 0;
+        }
+        numbers.sort(orderByPos);
+        for (let num of numbers) {
+            numberString = numberString + String(num.value);
+        }
+        console.log("on", checkValues, "numbers", numbers, "strings", numberString);
         /*if (Number(numberString) < 9) {
             let numberString = "";
             let lastChar = "";
