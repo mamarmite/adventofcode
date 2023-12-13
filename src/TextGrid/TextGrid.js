@@ -4,11 +4,56 @@ class TextGrid {
     constructor(rows) {
         this.grid = [];
         this.parse(rows);
+        this.invalids = ["."];
+        this.centers = [];
+        this.gearChar = "*";
+        this.gears = [];
+        this.parseForCenter();
     }
 
     parse(rows) {
         for (let row of rows) {
             this.grid.push(row.split(''));
+        }
+    }
+
+    parseForCenter() {
+        for (let y in this.grid) {
+            const row = this.grid[y];
+            for (let x in row) {
+                const pos = row[x];
+                this.pushCenter(this.char(Number(x), Number(y)));
+            }
+        }
+    }
+    parseForGears() {
+        for (let y in this.grid) {
+            const row = this.grid[y];
+            for (let x in row) {
+                const pos = row[x];
+                this.pushGears(Number(x), Number(y));
+            }
+        }
+    }
+
+    pushGears(x, y) {
+        if (this.char(Number(x), Number(y)) === this.gearChar) {
+            const gearCenter = {x:x, y:y};
+            const gearArea= this.area(gearCenter);
+
+            this.gears.push({
+                x:gearCenter.x,
+                y:gearCenter.y,
+                area: gearArea
+            });
+        }
+    }
+
+    pushCenter(char) {
+        if (!this.invalids.includes(char) &&
+            !Number.isInteger(Number(char)) &&
+            !this.centers.includes(char)) {
+            this.centers.push(char);
         }
     }
 
@@ -47,7 +92,7 @@ class TextGrid {
             const pointX = center.x + pointModifier.x;
             const pointY = center.y + pointModifier.y;
             if (pointX < xMin || pointY < yMin || pointX >= xMax || pointY >= yMax) continue;
-            area.push({x:pointX, y:pointY});
+            area.push({x:pointX, y:pointY, char:this.char(pointX, pointY) });
         }
         return area;
     }
@@ -65,39 +110,45 @@ class TextGrid {
         //fonctionne seulement horizontal.
         const walkingMax = 2;
         const targetRow = this.grid[fromPos.y];
-        console.log("find number from", this.char(fromPos.x, fromPos.y), "pos", fromPos);
-        const toLeft1 = fromPos.x - 1;
-        const toLeft2 = fromPos.x - 2;
-        const toLeft3 = fromPos.x - 3;
-        const center = fromPos.x;
-        const toRight1 = fromPos.x + 1;
-        const toRight2 = fromPos.x + 2;
-        const toRight3 = fromPos.x + 3;
-        //const checkValuesLeft = [];
-        const checkValues = [toLeft2, toLeft1, center, toRight1, toRight2];
 
-        const notValid = ['*','#','$', '.'];
         const stopValue = ['.'];
         let numbers = [];
+        //let points = [];
         let numberString = "";
+        let numberId = "";
         let lastChar = "";
         let lastCharIsNumber = false;
 
-        for (let targetX of checkValues) {
+
+        for (let targetX = fromPos.x - walkingMax; targetX <= fromPos.x + walkingMax; targetX++) {
+
             const targetChar = this.char(targetX, fromPos.y);
+
             if (stopValue.includes(targetChar) && lastCharIsNumber) {
-                break;
-            }
-            if (notValid.includes(targetChar) && lastCharIsNumber) {
+                if (targetX <= fromPos.x) numbers = [];//if it's a point but before the center, flush everything saved before
+                if (targetX >= fromPos.x) break;//if it's a point and after the center, break we should have our number.
                 continue;
             }
-            if (!notValid.includes(targetChar) && Number(targetChar) > 0) {
-                numbers.push({pos: Number(targetX), value: targetChar})
+            if (this.centers.includes(targetChar) && lastCharIsNumber) {
+                if (targetX <= fromPos.x) {
+                    numbers = [];
+                    continue;
+                }
+                if (targetX >= fromPos.x) {
+                    break;
+                }//if it's a point and after the center, break we should have our number.
+            }
+            if (!this.centers.includes(targetChar) && Number.isInteger(Number(targetChar))) {
+                numbers.push({
+                    pos: Number(targetX),
+                    row: Number(fromPos.y),
+                    value: targetChar
+                });
             }
             lastChar = targetChar;
-            lastCharIsNumber = Number(targetChar) > 0;
+            lastCharIsNumber = Number.isInteger(Number(targetChar));
         }
-
+        //  Reorder number in ASC from their x.
         const orderByPos = (a, b) => {
             if ( a.pos < b.pos ){
                 return -1;
@@ -109,26 +160,11 @@ class TextGrid {
         }
         numbers.sort(orderByPos);
         for (let num of numbers) {
-            numberString = numberString + String(num.value);
+            numberString = numberString + String(num.value);//concatenate
+            numberId += String(num.pos) + String(num.row);
         }
-        console.log("on", checkValues, "numbers", numbers, "strings", numberString);
-        /*if (Number(numberString) < 9) {
-            let numberString = "";
-            let lastChar = "";
-            let lastCharIsNumber = false;
-            for (let targetX of checkValuesRight) {
-                const targetChar = this.char(targetX, fromPos.y);
-                if (notValid.includes(targetChar) && lastCharIsNumber) {
-                    break;
-                }
-                if (!notValid.includes(targetChar) && Number(targetChar) > 0) {
-                    numberString += targetChar;
-                }
-                lastChar = targetChar;
-                lastCharIsNumber = Number(targetChar) > 0;
-            }
-        }*/
-        return numberString;
+
+        return {str:numberString, id:numberId};
     }
 }
 
