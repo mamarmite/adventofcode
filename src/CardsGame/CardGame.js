@@ -1,5 +1,4 @@
 import {Parser} from "../Parser.js";
-import {CubesGame} from "../CubesGame/CubesGame.js";
 
 class CardGame {
 
@@ -14,7 +13,6 @@ class CardGame {
         this.id = 0;
         this.run = [];
     }
-
 
     parse() {
         const game = this.data.split(this.gameSep);

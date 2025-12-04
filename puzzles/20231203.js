@@ -1,9 +1,9 @@
-import {Defi} from "./src/Defi.js";
-import {TextGrid} from "./src/TextGrid/TextGrid.js";
+import {Defi} from "../src/Defi.js";
+import {TextGrid} from "../src/TextGrid/TextGrid.js";
 
 class Defi20231203 extends Defi {
     constructor() {
-        super("20231203");
+        super("20231203", "data/2025");
         this.rows = [];
         this.grid = [];
         this.centers = ['*','#','$','+'];
@@ -35,9 +35,7 @@ class Defi20231203 extends Defi {
             this.findings.push(this.grid.find(center));
         }
 
-        let foundNumbers = [];
         let foundNumbersById = {};
-        let allFoundNumbers = [];
         for (let centers of this.findings) {
             for (let pos of centers) {
 
@@ -47,7 +45,6 @@ class Defi20231203 extends Defi {
                     areaAsValues.push(this.grid.char(point.x, point.y));
                 }*/
 
-                let lastPoint = {};
                 for (let point of a) {
                     let pointValue = Number(this.grid.char(point.x, point.y));
                     if (Number.isInteger(pointValue)) {
@@ -115,4 +112,4 @@ class Defi20231203 extends Defi {
     }
 }
 
-const currentDefi = new Defi20231203();
+new Defi20231203();

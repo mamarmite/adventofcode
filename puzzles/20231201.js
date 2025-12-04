@@ -1,8 +1,8 @@
-import {Defi} from "./src/Defi.js";
+import {Defi} from "../src/Defi.js";
 
 class Defi20231201 extends Defi {
     constructor() {
-        super("20231201");
+        super("20231201", "data/2025");
         this.letterNumbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirdteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
         this.replaceLetterNumbers = [];
     }

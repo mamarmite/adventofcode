@@ -1,10 +1,9 @@
-import {Defi} from "./src/Defi.js";
-import {CardGame} from "./src/CardsGame/CardGame.js";
-import {CubesGame} from "./src/CubesGame/CubesGame.js";
+import {Defi} from "../src/Defi.js";
+import {CardGame} from "../src/CardsGame/CardGame.js";
 
 class Defi20231204 extends Defi {
     constructor() {
-        super("20231204");
+        super("20231204", "data/2025");
         this.games = [];
     }
 
@@ -33,4 +32,4 @@ class Defi20231204 extends Defi {
     }
 }
 
-const currentDefi = new Defi20231204();
+new Defi20231204();
